@@ -24303,6 +24303,10 @@ namespace ts {
         function getStaticTypeOfReferencedJsxConstructor(context: JsxOpeningLikeElement) {
             if (isJsxIntrinsicIdentifier(context.tagName)) {
                 const result = getIntrinsicAttributesTypeFromJsxOpeningLikeElement(context);
+                const signatures = getConstructCallOrUnionSignaturesOfType(result, context);
+                if (signatures.length > 0) {
+                    return result;
+                }
                 const fakeSignature = createSignatureForJSXIntrinsic(context, result);
                 return getOrCreateTypeFromSignature(fakeSignature);
             }
@@ -25252,6 +25256,20 @@ namespace ts {
             return getNameFromJsxElementAttributesContainer(JsxNames.ElementChildrenAttributeNameContainer, jsxNamespace);
         }
 
+        function getConstructCallOrUnionSignaturesOfType(elementType: Type, caller: JsxOpeningLikeElement): readonly Signature[] {
+            // Resolve the signatures, preferring constructor
+            let signatures = getSignaturesOfType(elementType, SignatureKind.Construct);
+            if (signatures.length === 0) {
+                // No construct signatures, try call signatures
+                signatures = getSignaturesOfType(elementType, SignatureKind.Call);
+            }
+            if (signatures.length === 0 && elementType.flags & TypeFlags.Union) {
+                // If each member has some combination of new/call signatures; make a union signature list for those
+                signatures = getUnionSignatures(map((elementType as UnionType).types, t => getUninstantiatedJsxSignaturesOfType(t, caller)));
+            }
+            return signatures;
+        }
+
         function getUninstantiatedJsxSignaturesOfType(elementType: Type, caller: JsxOpeningLikeElement): readonly Signature[] {
             if (elementType.flags & TypeFlags.String) {
                 return [anySignature];
@@ -25267,18 +25285,7 @@ namespace ts {
                     return [fakeSignature];
                 }
             }
-            const apparentElemType = getApparentType(elementType);
-            // Resolve the signatures, preferring constructor
-            let signatures = getSignaturesOfType(apparentElemType, SignatureKind.Construct);
-            if (signatures.length === 0) {
-                // No construct signatures, try call signatures
-                signatures = getSignaturesOfType(apparentElemType, SignatureKind.Call);
-            }
-            if (signatures.length === 0 && apparentElemType.flags & TypeFlags.Union) {
-                // If each member has some combination of new/call signatures; make a union signature list for those
-                signatures = getUnionSignatures(map((apparentElemType as UnionType).types, t => getUninstantiatedJsxSignaturesOfType(t, caller)));
-            }
-            return signatures;
+            return getConstructCallOrUnionSignaturesOfType(getApparentType(elementType), caller);
         }
 
         function getIntrinsicAttributesTypeFromStringLiteralType(type: StringLiteralType, location: Node): Type | undefined {
@@ -26812,7 +26819,9 @@ namespace ts {
                 errorOutputContainer);
 
             function checkTagNameDoesNotExpectTooManyArguments(): boolean {
-                const tagType = isJsxOpeningElement(node) || isJsxSelfClosingElement(node) && !isJsxIntrinsicIdentifier(node.tagName) ? checkExpression(node.tagName) : undefined;
+                const tagType = isJsxIntrinsicIdentifier(node.tagName) ?
+                    getTypeOfSymbol(getIntrinsicTagSymbol(node)) :
+                    checkExpression(node.tagName);
                 if (!tagType) {
                     return true;
                 }
@@ -28183,9 +28192,24 @@ namespace ts {
             );
         }
 
+        function resolveCallForJsxOpeningLikeElement(node: JsxOpeningLikeElement, signatures: readonly Signature[], candidatesOutArray: Signature[] | undefined, checkMode: CheckMode): Signature {
+            if (signatures.length === 0) {
+                // We found no signatures at all, which is an error
+                error(node.tagName, Diagnostics.JSX_element_type_0_does_not_have_any_construct_or_call_signatures, getTextOfNode(node.tagName));
+                return resolveErrorCall(node);
+            }
+
+            return resolveCall(node, signatures, candidatesOutArray, checkMode, SignatureFlags.None);
+        }
+
         function resolveJsxOpeningLikeElement(node: JsxOpeningLikeElement, candidatesOutArray: Signature[] | undefined, checkMode: CheckMode): Signature {
             if (isJsxIntrinsicIdentifier(node.tagName)) {
                 const result = getIntrinsicAttributesTypeFromJsxOpeningLikeElement(node);
+                const signatures = getConstructCallOrUnionSignaturesOfType(result, node);
+                if (signatures.length > 0) {
+                    return resolveCallForJsxOpeningLikeElement(node, signatures, candidatesOutArray, checkMode);
+                }
+
                 const fakeSignature = createSignatureForJSXIntrinsic(node, result);
                 checkTypeAssignableToAndOptionallyElaborate(checkExpressionWithContextualType(node.attributes, getEffectiveFirstArgumentForJsxSignature(fakeSignature, node), /*mapper*/ undefined, CheckMode.Normal), result, node.tagName, node.attributes);
                 if (length(node.typeArguments)) {
@@ -28194,6 +28218,7 @@ namespace ts {
                 }
                 return fakeSignature;
             }
+
             const exprTypes = checkExpression(node.tagName);
             const apparentType = getApparentType(exprTypes);
             if (apparentType === errorType) {
@@ -28205,13 +28230,7 @@ namespace ts {
                 return resolveUntypedCall(node);
             }
 
-            if (signatures.length === 0) {
-                // We found no signatures at all, which is an error
-                error(node.tagName, Diagnostics.JSX_element_type_0_does_not_have_any_construct_or_call_signatures, getTextOfNode(node.tagName));
-                return resolveErrorCall(node);
-            }
-
-            return resolveCall(node, signatures, candidatesOutArray, checkMode, SignatureFlags.None);
+            return resolveCallForJsxOpeningLikeElement(node, signatures, candidatesOutArray, checkMode);
         }
 
         /**
