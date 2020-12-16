@@ -1,0 +1,181 @@
+=== tests/cases/conformance/jsx/h.d.ts ===
+export namespace h {
+>h : Symbol(h, Decl(h.d.ts, 29, 1), Decl(h.d.ts, 0, 0))
+
+    namespace JSX {
+>JSX : Symbol(JSX, Decl(h.d.ts, 0, 20))
+
+        interface Element {
+>Element : Symbol(Element, Decl(h.d.ts, 1, 19))
+
+            props?: any;
+>props : Symbol(Element.props, Decl(h.d.ts, 2, 27))
+        }
+
+        interface IntrinsicElements {
+>IntrinsicElements : Symbol(IntrinsicElements, Decl(h.d.ts, 4, 9))
+
+            alike: <T>(props: {
+>alike : Symbol(IntrinsicElements.alike, Decl(h.d.ts, 6, 37))
+>T : Symbol(T, Decl(h.d.ts, 7, 20))
+>props : Symbol(props, Decl(h.d.ts, 7, 23))
+
+                value: T,
+>value : Symbol(value, Decl(h.d.ts, 7, 31))
+>T : Symbol(T, Decl(h.d.ts, 7, 20))
+
+                children?: T
+>children : Symbol(children, Decl(h.d.ts, 8, 25))
+>T : Symbol(T, Decl(h.d.ts, 7, 20))
+
+            }) => Element;
+>Element : Symbol(Element, Decl(h.d.ts, 1, 19))
+
+            for: <T>(props: {
+>for : Symbol(IntrinsicElements.for, Decl(h.d.ts, 10, 26))
+>T : Symbol(T, Decl(h.d.ts, 12, 18))
+>props : Symbol(props, Decl(h.d.ts, 12, 21))
+
+                items: T[],
+>items : Symbol(items, Decl(h.d.ts, 12, 29))
+>T : Symbol(T, Decl(h.d.ts, 12, 18))
+
+                with?: (item: T) => boolean,
+>with : Symbol(with, Decl(h.d.ts, 13, 27))
+>item : Symbol(item, Decl(h.d.ts, 14, 24))
+>T : Symbol(T, Decl(h.d.ts, 12, 18))
+
+                children?: (item: T) => Element | Element[]
+>children : Symbol(children, Decl(h.d.ts, 14, 44))
+>item : Symbol(item, Decl(h.d.ts, 15, 28))
+>T : Symbol(T, Decl(h.d.ts, 12, 18))
+>Element : Symbol(Element, Decl(h.d.ts, 1, 19))
+>Element : Symbol(Element, Decl(h.d.ts, 1, 19))
+
+            }) => Element;
+>Element : Symbol(Element, Decl(h.d.ts, 1, 19))
+
+            b: { children: string }
+>b : Symbol(IntrinsicElements.b, Decl(h.d.ts, 16, 26))
+>children : Symbol(children, Decl(h.d.ts, 18, 16))
+        }
+
+        interface ElementAttributesProperty {
+>ElementAttributesProperty : Symbol(ElementAttributesProperty, Decl(h.d.ts, 19, 9))
+
+            props: any;
+>props : Symbol(ElementAttributesProperty.props, Decl(h.d.ts, 21, 45))
+        }
+
+        interface ElementChildrenAttribute {
+>ElementChildrenAttribute : Symbol(ElementChildrenAttribute, Decl(h.d.ts, 23, 9))
+
+            children: any;
+>children : Symbol(ElementChildrenAttribute.children, Decl(h.d.ts, 25, 44))
+        }
+    }
+}
+
+export declare function h<T>(tag: any, props: T, ...children: h.JSX.Element[]): h.JSX.Element;
+>h : Symbol(h, Decl(h.d.ts, 29, 1), Decl(h.d.ts, 0, 0))
+>T : Symbol(T, Decl(h.d.ts, 31, 26))
+>tag : Symbol(tag, Decl(h.d.ts, 31, 29))
+>props : Symbol(props, Decl(h.d.ts, 31, 38))
+>T : Symbol(T, Decl(h.d.ts, 31, 26))
+>children : Symbol(children, Decl(h.d.ts, 31, 48))
+>h : Symbol(h, Decl(h.d.ts, 29, 1), Decl(h.d.ts, 0, 0))
+>JSX : Symbol(h.JSX, Decl(h.d.ts, 0, 20))
+>Element : Symbol(h.JSX.Element, Decl(h.d.ts, 1, 19))
+>h : Symbol(h, Decl(h.d.ts, 29, 1), Decl(h.d.ts, 0, 0))
+>JSX : Symbol(h.JSX, Decl(h.d.ts, 0, 20))
+>Element : Symbol(h.JSX.Element, Decl(h.d.ts, 1, 19))
+
+=== tests/cases/conformance/jsx/test.tsx ===
+/** @jsx h */
+
+import { h } from './h';
+>h : Symbol(h, Decl(test.tsx, 2, 8))
+
+const simpleTestNumber = <alike value={42}>{1}</alike>;
+>simpleTestNumber : Symbol(simpleTestNumber, Decl(test.tsx, 4, 5))
+>alike : Symbol(h.JSX.IntrinsicElements.alike, Decl(h.d.ts, 6, 37))
+>value : Symbol(value, Decl(test.tsx, 4, 31))
+>alike : Symbol(h.JSX.IntrinsicElements.alike, Decl(h.d.ts, 6, 37))
+
+const simpleTestString = <alike value="42">1</alike>;
+>simpleTestString : Symbol(simpleTestString, Decl(test.tsx, 5, 5))
+>alike : Symbol(h.JSX.IntrinsicElements.alike, Decl(h.d.ts, 6, 37))
+>value : Symbol(value, Decl(test.tsx, 5, 31))
+>alike : Symbol(h.JSX.IntrinsicElements.alike, Decl(h.d.ts, 6, 37))
+
+const simpleTestErr = <alike value={42}>{"1"}</alike>;
+>simpleTestErr : Symbol(simpleTestErr, Decl(test.tsx, 6, 5))
+>alike : Symbol(h.JSX.IntrinsicElements.alike, Decl(h.d.ts, 6, 37))
+>value : Symbol(value, Decl(test.tsx, 6, 28))
+>alike : Symbol(h.JSX.IntrinsicElements.alike, Decl(h.d.ts, 6, 37))
+
+interface Book {
+>Book : Symbol(Book, Decl(test.tsx, 6, 54))
+
+    title: string;
+>title : Symbol(Book.title, Decl(test.tsx, 8, 16))
+
+    genre: string;
+>genre : Symbol(Book.genre, Decl(test.tsx, 9, 18))
+}
+
+const books: Book[] = [
+>books : Symbol(books, Decl(test.tsx, 13, 5))
+>Book : Symbol(Book, Decl(test.tsx, 6, 54))
+
+    { title: '', genre: ''},
+>title : Symbol(title, Decl(test.tsx, 14, 5))
+>genre : Symbol(genre, Decl(test.tsx, 14, 16))
+
+    { title: '', genre: ''},
+>title : Symbol(title, Decl(test.tsx, 15, 5))
+>genre : Symbol(genre, Decl(test.tsx, 15, 16))
+
+]
+
+const testBooks = (
+>testBooks : Symbol(testBooks, Decl(test.tsx, 18, 5))
+
+    <for items={books} with={book => book.genre === 'scifi'}>
+>for : Symbol(h.JSX.IntrinsicElements.for, Decl(h.d.ts, 10, 26))
+>items : Symbol(items, Decl(test.tsx, 19, 8))
+>books : Symbol(books, Decl(test.tsx, 13, 5))
+>with : Symbol(with, Decl(test.tsx, 19, 22))
+>book : Symbol(book, Decl(test.tsx, 19, 29))
+>book.genre : Symbol(Book.genre, Decl(test.tsx, 9, 18))
+>book : Symbol(book, Decl(test.tsx, 19, 29))
+>genre : Symbol(Book.genre, Decl(test.tsx, 9, 18))
+
+    { book => (
+>book : Symbol(book, Decl(test.tsx, 20, 5))
+
+        <b>{book.title}</b>
+>b : Symbol(h.JSX.IntrinsicElements.b, Decl(h.d.ts, 16, 26))
+>book.title : Symbol(Book.title, Decl(test.tsx, 8, 16))
+>book : Symbol(book, Decl(test.tsx, 20, 5))
+>title : Symbol(Book.title, Decl(test.tsx, 8, 16))
+>b : Symbol(h.JSX.IntrinsicElements.b, Decl(h.d.ts, 16, 26))
+
+    ) }
+    </for>
+>for : Symbol(h.JSX.IntrinsicElements.for, Decl(h.d.ts, 10, 26))
+
+);
+
+const testBooksError = <for items={books} with={book => book.genre === 'scifi'}>{1}</for>;
+>testBooksError : Symbol(testBooksError, Decl(test.tsx, 26, 5))
+>for : Symbol(h.JSX.IntrinsicElements.for, Decl(h.d.ts, 10, 26))
+>items : Symbol(items, Decl(test.tsx, 26, 27))
+>books : Symbol(books, Decl(test.tsx, 13, 5))
+>with : Symbol(with, Decl(test.tsx, 26, 41))
+>book : Symbol(book, Decl(test.tsx, 26, 48))
+>book.genre : Symbol(Book.genre, Decl(test.tsx, 9, 18))
+>book : Symbol(book, Decl(test.tsx, 26, 48))
+>genre : Symbol(Book.genre, Decl(test.tsx, 9, 18))
+>for : Symbol(h.JSX.IntrinsicElements.for, Decl(h.d.ts, 10, 26))
+

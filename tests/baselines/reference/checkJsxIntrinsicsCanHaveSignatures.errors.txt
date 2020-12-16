@@ -1,0 +1,73 @@
+tests/cases/conformance/jsx/test.tsx(7,41): error TS2322: Type 'string' is not assignable to type 'number | undefined'.
+tests/cases/conformance/jsx/test.tsx(27,81): error TS2322: Type 'number' is not assignable to type '((item: Book) => Element | Element[]) | undefined'.
+
+
+==== tests/cases/conformance/jsx/h.d.ts (0 errors) ====
+    export namespace h {
+        namespace JSX {
+            interface Element {
+                props?: any;
+            }
+    
+            interface IntrinsicElements {
+                alike: <T>(props: {
+                    value: T,
+                    children?: T
+                }) => Element;
+    
+                for: <T>(props: {
+                    items: T[],
+                    with?: (item: T) => boolean,
+                    children?: (item: T) => Element | Element[]
+                }) => Element;
+    
+                b: { children: string }
+            }
+    
+            interface ElementAttributesProperty {
+                props: any;
+            }
+    
+            interface ElementChildrenAttribute {
+                children: any;
+            }
+        }
+    }
+    
+    export declare function h<T>(tag: any, props: T, ...children: h.JSX.Element[]): h.JSX.Element;
+    
+==== tests/cases/conformance/jsx/test.tsx (2 errors) ====
+    /** @jsx h */
+    
+    import { h } from './h';
+    
+    const simpleTestNumber = <alike value={42}>{1}</alike>;
+    const simpleTestString = <alike value="42">1</alike>;
+    const simpleTestErr = <alike value={42}>{"1"}</alike>;
+                                            ~~~~~
+!!! error TS2322: Type 'string' is not assignable to type 'number | undefined'.
+!!! related TS6500 tests/cases/conformance/jsx/h.d.ts:10:17: The expected type comes from property 'children' which is declared here on type '{ value: number; children?: number | undefined; }'
+    
+    interface Book {
+        title: string;
+        genre: string;
+    }
+    
+    const books: Book[] = [
+        { title: '', genre: ''},
+        { title: '', genre: ''},
+    ]
+    
+    const testBooks = (
+        <for items={books} with={book => book.genre === 'scifi'}>
+        { book => (
+            <b>{book.title}</b>
+        ) }
+        </for>
+    );
+    
+    const testBooksError = <for items={books} with={book => book.genre === 'scifi'}>{1}</for>;
+                                                                                    ~~~
+!!! error TS2322: Type 'number' is not assignable to type '((item: Book) => Element | Element[]) | undefined'.
+!!! related TS6500 tests/cases/conformance/jsx/h.d.ts:16:17: The expected type comes from property 'children' which is declared here on type '{ items: Book[]; with?: ((item: Book) => boolean) | undefined; children?: ((item: Book) => Element | Element[]) | undefined; }'
+    

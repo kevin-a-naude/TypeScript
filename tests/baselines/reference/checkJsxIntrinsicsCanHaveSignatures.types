@@ -1,0 +1,178 @@
+=== tests/cases/conformance/jsx/h.d.ts ===
+export namespace h {
+    namespace JSX {
+        interface Element {
+            props?: any;
+>props : any
+        }
+
+        interface IntrinsicElements {
+            alike: <T>(props: {
+>alike : <T>(props: { value: T; children?: T | undefined; }) => Element
+>props : { value: T; children?: T | undefined; }
+
+                value: T,
+>value : T
+
+                children?: T
+>children : T | undefined
+
+            }) => Element;
+
+            for: <T>(props: {
+>for : <T>(props: { items: T[]; with?: ((item: T) => boolean) | undefined; children?: ((item: T) => Element | Element[]) | undefined; }) => Element
+>props : { items: T[]; with?: ((item: T) => boolean) | undefined; children?: ((item: T) => Element | Element[]) | undefined; }
+
+                items: T[],
+>items : T[]
+
+                with?: (item: T) => boolean,
+>with : ((item: T) => boolean) | undefined
+>item : T
+
+                children?: (item: T) => Element | Element[]
+>children : ((item: T) => Element | Element[]) | undefined
+>item : T
+
+            }) => Element;
+
+            b: { children: string }
+>b : { children: string; }
+>children : string
+        }
+
+        interface ElementAttributesProperty {
+            props: any;
+>props : any
+        }
+
+        interface ElementChildrenAttribute {
+            children: any;
+>children : any
+        }
+    }
+}
+
+export declare function h<T>(tag: any, props: T, ...children: h.JSX.Element[]): h.JSX.Element;
+>h : <T>(tag: any, props: T, ...children: h.JSX.Element[]) => h.JSX.Element
+>tag : any
+>props : T
+>children : h.JSX.Element[]
+>h : any
+>JSX : any
+>h : any
+>JSX : any
+
+=== tests/cases/conformance/jsx/test.tsx ===
+/** @jsx h */
+
+import { h } from './h';
+>h : <T>(tag: any, props: T, ...children: h.JSX.Element[]) => h.JSX.Element
+
+const simpleTestNumber = <alike value={42}>{1}</alike>;
+>simpleTestNumber : h.JSX.Element
+><alike value={42}>{1}</alike> : h.JSX.Element
+>alike : any
+>value : number
+>42 : 42
+>1 : 1
+>alike : any
+
+const simpleTestString = <alike value="42">1</alike>;
+>simpleTestString : h.JSX.Element
+><alike value="42">1</alike> : h.JSX.Element
+>alike : any
+>value : string
+>alike : any
+
+const simpleTestErr = <alike value={42}>{"1"}</alike>;
+>simpleTestErr : h.JSX.Element
+><alike value={42}>{"1"}</alike> : h.JSX.Element
+>alike : any
+>value : number
+>42 : 42
+>"1" : "1"
+>alike : any
+
+interface Book {
+    title: string;
+>title : string
+
+    genre: string;
+>genre : string
+}
+
+const books: Book[] = [
+>books : Book[]
+>[    { title: '', genre: ''},    { title: '', genre: ''},] : { title: string; genre: string; }[]
+
+    { title: '', genre: ''},
+>{ title: '', genre: ''} : { title: string; genre: string; }
+>title : string
+>'' : ""
+>genre : string
+>'' : ""
+
+    { title: '', genre: ''},
+>{ title: '', genre: ''} : { title: string; genre: string; }
+>title : string
+>'' : ""
+>genre : string
+>'' : ""
+
+]
+
+const testBooks = (
+>testBooks : h.JSX.Element
+>(    <for items={books} with={book => book.genre === 'scifi'}>    { book => (        <b>{book.title}</b>    ) }    </for>) : h.JSX.Element
+
+    <for items={books} with={book => book.genre === 'scifi'}>
+><for items={books} with={book => book.genre === 'scifi'}>    { book => (        <b>{book.title}</b>    ) }    </for> : h.JSX.Element
+>for : any
+>items : Book[]
+>books : Book[]
+>with : (book: Book) => boolean
+>book => book.genre === 'scifi' : (book: Book) => boolean
+>book : Book
+>book.genre === 'scifi' : boolean
+>book.genre : string
+>book : Book
+>genre : string
+>'scifi' : "scifi"
+
+    { book => (
+>book => (        <b>{book.title}</b>    ) : (book: Book) => h.JSX.Element
+>book : Book
+>(        <b>{book.title}</b>    ) : h.JSX.Element
+
+        <b>{book.title}</b>
+><b>{book.title}</b> : h.JSX.Element
+>b : any
+>book.title : string
+>book : Book
+>title : string
+>b : any
+
+    ) }
+    </for>
+>for : any
+
+);
+
+const testBooksError = <for items={books} with={book => book.genre === 'scifi'}>{1}</for>;
+>testBooksError : h.JSX.Element
+><for items={books} with={book => book.genre === 'scifi'}>{1}</for> : h.JSX.Element
+>for : any
+>items : Book[]
+>books : Book[]
+>with : (book: Book) => boolean
+>book => book.genre === 'scifi' : (book: Book) => boolean
+>book : Book
+>book.genre === 'scifi' : boolean
+>book.genre : string
+>book : Book
+>genre : string
+>'scifi' : "scifi"
+>1 : 1
+>for : any
+
